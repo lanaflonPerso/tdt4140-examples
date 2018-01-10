@@ -41,36 +41,34 @@ public class GeoLocations implements Iterable<LatLong> {
 		this.path = path;
 	}
 	
-	public Comparator<? super LatLong> latLongComparator(LatLong latLong) {
+	public Comparator<? super LatLong> closestComparator(LatLong latLong) {
 		return (latLong1, latLong2) -> (int) Math.signum(latLong.distance(latLong1) - latLong.distance(latLong2));
 	}
 
 	public Collection<LatLong> findLocationsNearby(LatLong latLong, double distance) {
 		return locations.stream()
-				.filter(latLong2 -> latLong.distance(latLong2) <= distance)
-				.sorted(latLongComparator(latLong))
+				.filter(latLong2 -> distance == 0.0 ? latLong2.equals(latLong) : latLong.distance(latLong2) <= distance)
+				.sorted(closestComparator(latLong))
 				.collect(Collectors.toList());
 	}
 
 	public LatLong findNearestLocation(LatLong latLong) {
 		Optional<LatLong> min = locations.stream()
-				.min(latLongComparator(latLong));
+				.min(closestComparator(latLong));
 		return min.isPresent() ? min.get() : null;
 	}
 
 	//
 	
 	public void addLocation(LatLong latLong) {
-		if (! locations.contains(latLong)) {
-			locations.add(latLong);
-		}
+		locations.add(latLong);
 	}
 
 	public void removeLocations(LatLong latLong, double distance) {
 		Iterator<LatLong> it = locations.iterator();
 		while (it.hasNext()) {
 			LatLong latLong2 = it.next();
-			if (latLong.distance(latLong2) <= distance) {
+			if (distance == 0.0 ? latLong2.equals(latLong) : latLong.distance(latLong2) <= distance) {
 				it.remove();
 			}
 		}

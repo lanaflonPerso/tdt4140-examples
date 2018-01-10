@@ -20,7 +20,7 @@ public class GeoLocationsTest {
 	public void testGeoLocations() {
 		Assert.assertEquals(0, geoLocations.size());
 		Assert.assertEquals(1, new GeoLocations(new LatLong(0, 0)).size());
-		Assert.assertEquals(1, new GeoLocations(new LatLong(0, 0), new LatLong(0, 0)).size());
+		Assert.assertEquals(2, new GeoLocations(new LatLong(0, 0), new LatLong(0, 0)).size());
 		Assert.assertEquals(2, new GeoLocations(new LatLong(0, 0), new LatLong(1, 1)).size());
 	}
 
@@ -46,11 +46,11 @@ public class GeoLocationsTest {
 		assertGeoLocations(latLong1);
 
 		geoLocations.addLocation(new LatLong(0, 0));
-		assertGeoLocations(latLong1);
+		assertGeoLocations(latLong1, latLong1);
 
 		LatLong latLong2 = new LatLong(1, 1);
 		geoLocations.addLocation(latLong2);
-		assertGeoLocations(latLong1, latLong2);
+		assertGeoLocations(latLong1, latLong1, latLong2);
 	}
 
 	@Test

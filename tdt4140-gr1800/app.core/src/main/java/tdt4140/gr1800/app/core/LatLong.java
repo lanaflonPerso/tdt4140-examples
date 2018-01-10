@@ -10,10 +10,6 @@ public class LatLong {
 		this.longitude = longitude;
 	}
 
-	public double distance(LatLong loc) {
-		return distance(this.latitude, this.longitude, loc.latitude, loc.longitude);
-	}
-
 	public final static String SEPARATOR = ",";
 
 	@Override
@@ -84,6 +80,9 @@ public class LatLong {
 	/*::                                                                         :*/
 	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	public static double distance(double lat1, double lon1, double lat2, double lon2) {
+		if (lon1 == lon2 && lat1 == lat2) {
+			return 0.0;
+		}
 		double theta = lon1 - lon2;
 		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
 		dist = Math.acos(dist);
@@ -97,6 +96,10 @@ public class LatLong {
 
 	public static double distance(LatLong latLong1, LatLong latLong2) {
 		return distance(latLong1.latitude, latLong1.longitude, latLong2.latitude, latLong2.longitude);
+	}
+
+	public double distance(LatLong latLong2) {
+		return distance(latitude, longitude, latLong2.latitude, latLong2.longitude);
 	}
 
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
