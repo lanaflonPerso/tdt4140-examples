@@ -70,5 +70,19 @@ public class GeoLocationsTest {
 		geoLocations.addLocation(latLong);
 		LatLong nearestlocations = geoLocations.findNearestLocation(latLong);
 		Assert.assertEquals(latLong, nearestlocations); 
-	}	
+	}
+	
+	@Test
+	public void testRemoveSameLocations() {
+		GeoLocations geoLocations1 = new GeoLocations(new LatLong(0, 0), new LatLong(1, 1));
+		Assert.assertEquals(2, geoLocations1.size());
+		geoLocations1.removeLocations(new LatLong(0, 0), 0.0);
+		Assert.assertEquals(1, geoLocations1.size());
+		geoLocations1.removeLocations(new LatLong(1, 1), 0.0);
+		Assert.assertEquals(0, geoLocations1.size());		
+		GeoLocations geoLocations2 = new GeoLocations(new LatLong(0, 0), new LatLong(0, 0));
+		Assert.assertEquals(2, geoLocations2.size());
+		geoLocations2.removeLocations(new LatLong(0, 0), 0.0);
+		Assert.assertEquals(0, geoLocations2.size());
+	}
 }
