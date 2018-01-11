@@ -4,8 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
-import com.lynden.gmapsfx.GoogleMapView;
-
+import fxmapcontrol.MapBase;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -28,6 +27,6 @@ public class FxAppTest extends ApplicationTest {
     @Test
     public void testMapExists() {
     		Node map = lookup("#mapView").query();
-    		Assert.assertTrue(map instanceof GoogleMapView);
+    		Assert.assertTrue(map instanceof MapBase);
     }
 }

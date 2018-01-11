@@ -13,7 +13,7 @@
 
 	<modules>
 		<module>app.core</module>
+		<module>FxMapControl</module>
 		<module>app.ui</module>
-		
 	</modules>
 </project>

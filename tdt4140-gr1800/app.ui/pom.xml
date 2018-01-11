@@ -16,14 +16,18 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/com.lynden/GMapsFX -->
+		<!-- https://mvnrepository.com/artifact/com.lynden/GMapsFX
 		<dependency>
 			<groupId>com.lynden</groupId>
 			<artifactId>GMapsFX</artifactId>
 			<version>2.12.0</version>
 		</dependency>
-		<!-- <dependency> <groupId>fischer.clemens</groupId> <artifactId>fx-map-control</artifactId> 
-			<version>1.0</version> </dependency> -->
+		 -->
+		<dependency>
+			<groupId>fischer.clemens</groupId>
+			<artifactId>fx-map-control</artifactId> 
+			<version>1.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
