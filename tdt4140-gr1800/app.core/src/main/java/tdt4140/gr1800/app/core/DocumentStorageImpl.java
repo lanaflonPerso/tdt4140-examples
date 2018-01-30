@@ -31,6 +31,7 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 	@Override
 	public void openDocument(L storage) throws IOException {
 		setDocument(loadDocument(storage));
+		setDocumentLocation(storage);
 	}
 
 	@Override
@@ -39,8 +40,14 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 	}
 
 	public void saveDocumentAs(L documentLocation) throws IOException {
+		L oldDocumentLocation = getDocumentLocation();
 		setDocumentLocation(documentLocation);
-		saveDocument();
+		try {
+			saveDocument();
+		} catch (IOException e) {
+			setDocumentLocation(oldDocumentLocation);
+			throw e;
+		}
 	}
 	
 	public void saveCopyAs(L documentLocation) throws IOException {
