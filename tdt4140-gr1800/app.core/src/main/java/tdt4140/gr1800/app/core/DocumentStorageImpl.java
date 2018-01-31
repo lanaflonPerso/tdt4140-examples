@@ -16,6 +16,11 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 		this.documentLocation = documentLocation;
 	}
 
+	protected void setDocumentAndLocation(D document, L documentLocation) {
+		setDocument(document);
+		setDocumentLocation(documentLocation);
+	}
+	
 	protected abstract D getDocument();
 	protected abstract void setDocument(D document);
 
@@ -25,13 +30,12 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 	
 	@Override
 	public void newDocument() {
-		setDocument(createDocument());
+		setDocumentAndLocation(createDocument(), null);
 	}
 
 	@Override
 	public void openDocument(L storage) throws IOException {
-		setDocument(loadDocument(storage));
-		setDocumentLocation(storage);
+		setDocumentAndLocation(loadDocument(storage), storage);
 	}
 
 	@Override

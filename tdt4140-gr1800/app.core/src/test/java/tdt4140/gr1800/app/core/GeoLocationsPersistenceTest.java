@@ -3,6 +3,7 @@ package tdt4140.gr1800.app.core;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -31,6 +32,13 @@ public class GeoLocationsPersistenceTest {
 		}
 	}
 	
+	public static Collection<GeoLocations> createGeoLocationsDotJson() {
+		return Arrays.asList(
+			new GeoLocations("1", new LatLong(63, 10), new LatLong(63.1, 10.1)),
+			new GeoLocations("2", new LatLong(64, 11), new LatLong(64.1, 11.1))
+		);
+	}
+	
 	public static void testGeoLocationsDotJson(Collection<GeoLocations> geoLocations) {
 		Assert.assertEquals(2, geoLocations.size());
 		Iterator<GeoLocations> it = geoLocations.iterator();
@@ -40,9 +48,7 @@ public class GeoLocationsPersistenceTest {
 
 	@Test
 	public void testSaveLocations() {
-		Collection<GeoLocations> geoLocations = new ArrayList<GeoLocations>();
-		geoLocations.add(new GeoLocations("1", new LatLong(63, 10), new LatLong(63.1, 10.1)));
-		geoLocations.add(new GeoLocations("2", new LatLong(64, 11), new LatLong(64.1, 11.1)));
+		Collection<GeoLocations> geoLocations = createGeoLocationsDotJson();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
 			persistence.saveLocations(geoLocations, outputStream);

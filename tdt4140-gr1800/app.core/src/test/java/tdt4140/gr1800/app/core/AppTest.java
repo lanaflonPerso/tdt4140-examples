@@ -18,11 +18,15 @@ public class AppTest {
 	}
 
 	@Test
-	public void testLoadDocument() {
+	public void testNewDocument() {
 		IDocumentStorage<File> documentStorage = app.getDocumentStorage();
-		URL url = getClass().getResource("geoLocations.json");
-		Assert.assertEquals("Not file URL", "file", url.getProtocol()); 
-		File file = new File(url.getPath());
+		documentStorage.newDocument();
+		Assert.assertFalse(app.getGeoLocationNames().iterator().hasNext());
+		Assert.assertNull(documentStorage.getDocumentLocation());
+	}
+
+	protected void testLoadDocument(File file) {
+		IDocumentStorage<File> documentStorage = app.getDocumentStorage();
 		try {
 			documentStorage.openDocument(file);
 		} catch (IOException e) {
@@ -30,5 +34,28 @@ public class AppTest {
 		}
 		Assert.assertEquals(file, documentStorage.getDocumentLocation());
 		GeoLocationsPersistenceTest.testGeoLocationsDotJson(app.getGeoLocations((String[]) null));
+	}
+	
+	@Test
+	public void testLoadDocument() {
+		URL url = getClass().getResource("geoLocations.json");
+		Assert.assertEquals("Not file URL", "file", url.getProtocol()); 
+		File file = new File(url.getPath());
+		testLoadDocument(file);
+	}
+
+	@Test
+	public void testSaveDocument() {
+		testLoadDocument();
+		try {
+			IDocumentStorage<File> documentStorage = app.getDocumentStorage();
+			File tempFile = File.createTempFile("geoLocations", ".json");
+			tempFile.deleteOnExit();
+			documentStorage.setDocumentLocation(tempFile);
+			documentStorage.saveDocument();
+			testLoadDocument(tempFile);
+		} catch (IOException e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 }
