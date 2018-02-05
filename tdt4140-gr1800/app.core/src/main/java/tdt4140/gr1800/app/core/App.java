@@ -4,21 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
+import tdt4140.gr1800.app.gpx.GpxDocumentConverter;
 import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
 
 public class App {
 
 	private GeoLocationsPersistence geoLocationsLoader = new GeoLocationsJsonPersistence();
 	
-	public void loadGeoLocations(URI uri) throws Exception {
-		geoLocations = geoLocationsLoader.loadLocations(uri.toURL().openStream());
-	}
-
-	private Collection<GeoLocations> geoLocations;
+	private Collection<GeoLocations> geoLocations = null;
 
 	public Iterable<String> getGeoLocationNames() {
 		Collection<String> names = new ArrayList<String>(geoLocations != null ? geoLocations.size() : 0);
@@ -69,7 +67,54 @@ public class App {
 		return result;
 	}
 
+	public void setGeoLocations(Collection<GeoLocations> geoLocations) {
+		this.geoLocations = new ArrayList<>(geoLocations);
+		fireGeoLocationsUpdated(null);
+	}
+
+	public void addGeoLocations(GeoLocations geoLocations) {
+		if (hasGeoLocations(geoLocations.getName())) {
+			throw new IllegalArgumentException("Duplicate geo-locations name: " + geoLocations.getName());
+		}
+		this.geoLocations.add(geoLocations);
+		fireGeoLocationsUpdated(geoLocations);
+	}
+	
+	public void removeGeoLocations(GeoLocations geoLocations) {
+		this.geoLocations.remove(geoLocations);
+		fireGeoLocationsUpdated(geoLocations);
+	}
+
+	private Collection<IGeoLocationsListener> geoLocationsListeners = new ArrayList<>();
+	
+	public void addGeoLocationsListener(IGeoLocationsListener listener) {
+		geoLocationsListeners.add(listener);
+	}
+
+	public void removeGeoLocationsListener(IGeoLocationsListener listener) {
+		geoLocationsListeners.remove(listener);
+	}
+
+	protected void fireGeoLocationsUpdated(GeoLocations geoLocations) {
+		for (IGeoLocationsListener listener : geoLocationsListeners) {
+			listener.geoLocationsUpdated(geoLocations);
+		}
+	}
+
 	// 
+
+	private IDocumentPersistence<Collection<GeoLocations>, File> documentPersistence = new IDocumentPersistence<Collection<GeoLocations>, File>() {
+		
+		@Override
+		public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
+			return geoLocationsLoader.loadLocations(new FileInputStream(documentLocation));
+		}
+
+		@Override
+		public void saveDocument(Collection<GeoLocations> document, File documentLocation) throws Exception {
+			geoLocationsLoader.saveLocations(document, new FileOutputStream(documentLocation));
+		}
+	};
 
 	private DocumentStorageImpl<Collection<GeoLocations>, File> documentStorage = new DocumentStorageImpl<Collection<GeoLocations>, File>() {
 
@@ -80,7 +125,7 @@ public class App {
 
 		@Override
 		protected void setDocument(Collection<GeoLocations> document) {
-			geoLocations = document;
+			setGeoLocations(document);
 		}
 
 		@Override
@@ -88,26 +133,43 @@ public class App {
 			return new ArrayList<GeoLocations>();
 		}
 
-		@Override
-		protected Collection<GeoLocations> loadDocument(File file) throws IOException {
-			try {
-				return geoLocationsLoader.loadLocations(new FileInputStream(file));
-			} catch (Exception e) {
-				throw new IOException(e);
-			}
+		public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
+			return documentPersistence.loadDocument(documentLocation);
 		}
-
-		@Override
-		protected void storeDocument(Collection<GeoLocations> document, File file) throws IOException {
-			try {
-				geoLocationsLoader.saveLocations(document, new FileOutputStream(file));
-			} catch (Exception e) {
-				throw new IOException(e);
-			}
+		
+		public void saveDocument(Collection<GeoLocations> document, File documentLocation) throws Exception {
+			documentPersistence.saveDocument(document, documentLocation);
+		}
+		
+		public Collection<IDocumentImporter<File>> getDocumentImporters() {
+			return documentLoaders.stream().map(loader -> new IDocumentImporter<File>() {
+				@Override
+				public void importDocument(File file) throws IOException {
+					try {
+						setDocumentAndLocation(loader.loadDocument(file), null);
+					} catch (Exception e) {
+						throw new IOException(e);
+					} 
+				}
+			}).collect(Collectors.toList());
 		}
 	};
 
 	public IDocumentStorage<File> getDocumentStorage() {
 		return documentStorage;
+	}
+
+	private Collection<IDocumentLoader<Collection<GeoLocations>, File>> documentLoaders = Arrays.asList(
+		new IDocumentLoader<Collection<GeoLocations>, File>() {
+			private GpxDocumentConverter gpxConverter = new GpxDocumentConverter();
+			@Override
+			public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
+				return gpxConverter.loadDocument(documentLocation);
+			}
+		}
+	);
+	
+	public Iterable<IDocumentLoader<Collection<GeoLocations>, File>> getDocumentLoaders() {
+		return documentLoaders;
 	}
 }

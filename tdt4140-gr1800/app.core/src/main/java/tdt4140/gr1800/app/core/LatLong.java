@@ -1,6 +1,6 @@
 package tdt4140.gr1800.app.core;
 
-public class LatLong {
+public class LatLong implements GeoLocated {
 	
 	public final double latitude, longitude;
 
@@ -55,6 +55,13 @@ public class LatLong {
 		double lon = Double.valueOf(s.substring(pos + sep.length()).trim());
 		
 		return new LatLong(lat, lon);
+	}
+	
+	// GeoLocated
+	
+	@Override
+	public LatLong getLatLong() {
+		return this;
 	}
 	
 	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/

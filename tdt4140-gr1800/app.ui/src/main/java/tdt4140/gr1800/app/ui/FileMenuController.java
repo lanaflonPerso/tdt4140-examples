@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import tdt4140.gr1800.app.core.IDocumentImporter;
 import tdt4140.gr1800.app.core.IDocumentStorage;
 
 public class FileMenuController {
@@ -124,6 +125,22 @@ public class FileMenuController {
 			// TODO
 		} finally {
 			documentStorage.setDocumentLocation(oldStorage);
+		}
+	}
+
+	@FXML
+	public void handleImportAction() {
+		FileChooser fileChooser = getFileChooser();
+		File selection = fileChooser.showOpenDialog(null);
+//		String path = selection.getPath();
+//		int pos = path.lastIndexOf('.');
+//		String ext = (pos > 0 ? path.substring(pos + 1) : null);
+		for (IDocumentImporter<File> importer : documentStorage.getDocumentImporters()) {
+			try {
+				importer.importDocument(selection);
+				break;
+			} catch (Exception e) {
+			}
 		}
 	}
 }

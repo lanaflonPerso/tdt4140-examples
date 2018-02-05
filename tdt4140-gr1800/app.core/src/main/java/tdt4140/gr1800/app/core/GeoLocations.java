@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class GeoLocations implements Iterable<LatLong> {
+public class GeoLocations implements Iterable<GeoLocated> {
 
 	private String name;
 	
@@ -19,7 +19,7 @@ public class GeoLocations implements Iterable<LatLong> {
 		this.name = name;
 	}
 	
-	private Collection<LatLong> locations = new ArrayList<LatLong>();
+	private Collection<GeoLocated> locations = new ArrayList<GeoLocated>();
 	private boolean path = false;
 	
 	public GeoLocations(LatLong...latLongs) {
@@ -27,7 +27,7 @@ public class GeoLocations implements Iterable<LatLong> {
 			addLocation(latLongs[i]);
 		}
 	}
-	
+
 	public GeoLocations(String name, LatLong...latLongs) {
 		this(latLongs);
 		setName(name);
@@ -41,34 +41,34 @@ public class GeoLocations implements Iterable<LatLong> {
 		this.path = path;
 	}
 	
-	public Comparator<? super LatLong> closestComparator(LatLong latLong) {
-		return (latLong1, latLong2) -> (int) Math.signum(latLong.distance(latLong1) - latLong.distance(latLong2));
+	public Comparator<? super GeoLocated> closestComparator(GeoLocated latLong) {
+		return (geoLoc1, geoLoc2) -> (int) Math.signum(latLong.distance(geoLoc1) - latLong.distance(geoLoc2));
 	}
 
-	public Collection<LatLong> findLocationsNearby(LatLong latLong, double distance) {
+	public Collection<GeoLocated> findLocationsNearby(GeoLocated geoLoc, double distance) {
 		return locations.stream()
-				.filter(latLong2 -> distance == 0.0 ? latLong2.equals(latLong) : latLong.distance(latLong2) <= distance)
-				.sorted(closestComparator(latLong))
+				.filter(geoLoc2 -> distance == 0.0 ? geoLoc2.equalsLatLong(geoLoc) : geoLoc.distance(geoLoc2) <= distance)
+				.sorted(closestComparator(geoLoc))
 				.collect(Collectors.toList());
 	}
 
-	public LatLong findNearestLocation(LatLong latLong) {
-		Optional<LatLong> min = locations.stream()
-				.min(closestComparator(latLong));
+	public GeoLocated findNearestLocation(GeoLocated geoLoc) {
+		Optional<GeoLocated> min = locations.stream()
+				.min(closestComparator(geoLoc));
 		return min.isPresent() ? min.get() : null;
 	}
 
 	//
 	
-	public void addLocation(LatLong latLong) {
-		locations.add(latLong);
+	public void addLocation(LatLong geoLoc) {
+		locations.add(geoLoc);
 	}
 
-	public void removeLocations(LatLong latLong, double distance) {
-		Iterator<LatLong> it = locations.iterator();
+	public void removeLocations(GeoLocated geoLoc, double distance) {
+		Iterator<GeoLocated> it = locations.iterator();
 		while (it.hasNext()) {
-			LatLong latLong2 = it.next();
-			if (distance == 0.0 ? latLong2.equals(latLong) : latLong.distance(latLong2) <= distance) {
+			GeoLocated geoLoc2 = it.next();
+			if (distance == 0.0 ? geoLoc2.equalsLatLong(geoLoc) : geoLoc.getLatLong().distance(geoLoc2.getLatLong()) <= distance) {
 				it.remove();
 			}
 		}
@@ -79,7 +79,7 @@ public class GeoLocations implements Iterable<LatLong> {
 	}
 	
 	@Override
-	public Iterator<LatLong> iterator() {
+	public Iterator<GeoLocated> iterator() {
 		return locations.iterator();
 	}
 }

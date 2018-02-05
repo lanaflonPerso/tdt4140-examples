@@ -29,11 +29,11 @@ public class GeoLocationsTest {
 	}
 
 	public static void assertGeoLocations(GeoLocations geoLocations, LatLong...latLongs) {
-		Iterator<LatLong> it = geoLocations.iterator();
+		Iterator<GeoLocated> it = geoLocations.iterator();
 		Assert.assertEquals(latLongs.length, geoLocations.size());
 		int pos = 0;
 		while (it.hasNext()) {
-			Assert.assertEquals(latLongs[pos], it.next());
+			checkGeoLocated(latLongs[pos], it.next());
 			pos++;
 		}
 	}
@@ -53,14 +53,18 @@ public class GeoLocationsTest {
 		assertGeoLocations(latLong1, latLong1, latLong2);
 	}
 
+	static void checkGeoLocated(GeoLocated geoLoc1, GeoLocated geoLoc2) {
+		Assert.assertTrue(geoLoc1.equalsLatLong(geoLoc2));
+	}
+	
 	@Test
 	public void testFindLocationsNearby() {
 		LatLong latLong = new LatLong(0, 0);
 		Assert.assertTrue(geoLocations.findLocationsNearby(latLong, 0).isEmpty());
 		geoLocations.addLocation(latLong);
-		Collection<LatLong> locationsNearby = geoLocations.findLocationsNearby(latLong, 0);
+		Collection<GeoLocated> locationsNearby = geoLocations.findLocationsNearby(latLong, 0);
 		Assert.assertEquals(1, locationsNearby.size());
-		Assert.assertEquals(latLong, geoLocations.iterator().next()); 
+		checkGeoLocated(latLong, geoLocations.iterator().next()); 
 	}
 	
 	@Test
@@ -68,8 +72,8 @@ public class GeoLocationsTest {
 		LatLong latLong = new LatLong(0, 0);
 		Assert.assertNull(geoLocations.findNearestLocation(latLong));
 		geoLocations.addLocation(latLong);
-		LatLong nearestlocations = geoLocations.findNearestLocation(latLong);
-		Assert.assertEquals(latLong, nearestlocations); 
+		GeoLocated nearestlocations = geoLocations.findNearestLocation(latLong);
+		checkGeoLocated(latLong, nearestlocations);
 	}
 	
 	@Test

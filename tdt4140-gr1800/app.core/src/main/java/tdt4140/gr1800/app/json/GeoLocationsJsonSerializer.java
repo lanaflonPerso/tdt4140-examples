@@ -6,8 +6,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import tdt4140.gr1800.app.core.GeoLocated;
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.LatLong;
 
 public class GeoLocationsJsonSerializer extends StdSerializer<GeoLocations> {
 	
@@ -30,10 +30,10 @@ public class GeoLocationsJsonSerializer extends StdSerializer<GeoLocations> {
 		jsonGen.writeBoolean(geoLocations.isPath());
 		jsonGen.writeFieldName(LOCATIONS_FIELD_NAME);
 		jsonGen.writeStartArray();
-		for (LatLong latLon : geoLocations) {
+		for (GeoLocated geoLoc : geoLocations) {
 			jsonGen.writeStartArray();
-			jsonGen.writeNumber(latLon.latitude);
-			jsonGen.writeNumber(latLon.longitude);
+			jsonGen.writeNumber(geoLoc.getLatitude());
+			jsonGen.writeNumber(geoLoc.getLongitude());
 			jsonGen.writeEndArray();
 		}
 		jsonGen.writeEndArray();

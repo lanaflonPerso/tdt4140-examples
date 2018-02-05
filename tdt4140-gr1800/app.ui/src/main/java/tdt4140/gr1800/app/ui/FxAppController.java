@@ -2,6 +2,7 @@ package tdt4140.gr1800.app.ui;
 
 import java.util.Iterator;
 
+import fxmapcontrol.Location;
 import fxmapcontrol.MapBase;
 import fxmapcontrol.MapItemsControl;
 import fxmapcontrol.MapNode;
@@ -10,10 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import tdt4140.gr1800.app.core.App;
+import tdt4140.gr1800.app.core.GeoLocated;
 import tdt4140.gr1800.app.core.GeoLocations;
+import tdt4140.gr1800.app.core.IGeoLocationsListener;
 import tdt4140.gr1800.app.core.LatLong;
 
-public class FxAppController {
+public class FxAppController implements IGeoLocationsListener {
 
 	@FXML
 	private FileMenuController fileMenuController;
@@ -36,12 +39,17 @@ public class FxAppController {
 		app = new App();
 		fileMenuController.setDocumentStorage(app.getDocumentStorage());
 		fileMenuController.setOnDocumentChanged(documentStorage -> initMapMarkers());
+
 		geoLocationsSelector.getSelectionModel().selectedItemProperty().addListener((stringProperty, oldValue, newValue) -> updateGeoLocations());
 
 		mapView.getChildren().add(MapTileLayer.getOpenStreetMapLayer());
-		mapView.zoomLevelProperty().bind(zoomSlider.valueProperty());
+		zoomSlider.valueProperty().addListener((prop, oldValue, newValue) -> {
+			mapView.setZoomLevel(zoomSlider.getValue());			
+		});
 		markersParent = new MapItemsControl<MapNode>();
 		mapView.getChildren().add(markersParent);
+		
+		app.addGeoLocationsListener(this);
 	}
 
 	private Object updateGeoLocations() {
@@ -50,11 +58,12 @@ public class FxAppController {
 
 	private void initMapMarkers() {
 		markersParent.getItems().clear();
+		geoLocationsSelector.getItems().clear();
 		for (String geoLocationName : app.getGeoLocationNames()) {
 			GeoLocations geoLocations = app.getGeoLocations(geoLocationName);
 			MapMarker lastMarker = null;
-			for (LatLong latLong : geoLocations) {
-				MapMarker mapMarker = new MapMarker(latLong);
+			for (GeoLocated geoLoc : geoLocations) {
+				MapMarker mapMarker = new MapMarker(geoLoc.getLatLong());
 				markersParent.getItems().add(mapMarker);
 				if (geoLocations.isPath() && lastMarker != null) {
 					MapPathLine pathLine = new MapPathLine(lastMarker, mapMarker);
@@ -62,10 +71,10 @@ public class FxAppController {
 				}
 				lastMarker = mapMarker;
 			}
-			geoLocationsSelector.getItems().add(geoLocationName);
+			geoLocationsSelector.getItems().add(geoLocationName + " (" + geoLocations.size() + ")");
 		}
 		LatLong center = getCenter(null);
-		System.out.println("Map markers initialized");
+		mapView.setCenter(new Location(center.latitude, center.longitude));
 	}
 
 	private LatLong getCenter(GeoLocations geoLocations) {
@@ -79,8 +88,8 @@ public class FxAppController {
 			if (names != null) {
 				geoLocations = app.getGeoLocations(names.next());
 			}
-			for (LatLong latLong : geoLocations) {
-				double lat = latLong.latitude, lon = latLong.longitude;
+			for (GeoLocated geoLoc : geoLocations) {
+				double lat = geoLoc.getLatitude(), lon = geoLoc.getLongitude();
 				latSum += lat;
 				lonSum += lon;
 				num++;
@@ -90,5 +99,10 @@ public class FxAppController {
 			}
 		}
 		return new LatLong(latSum / num, lonSum / num);
+	}
+
+	@Override
+	public void geoLocationsUpdated(GeoLocations geoLocations) {
+		initMapMarkers();
 	}
 }

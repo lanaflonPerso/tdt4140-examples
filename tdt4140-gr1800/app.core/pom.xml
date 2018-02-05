@@ -25,6 +25,18 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.9.3</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    			<artifactId>jackson-dataformat-xml</artifactId>
+    			<version>2.9.3</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/io.jenetics/jpx -->
+		<dependency>
+		    <groupId>io.jenetics</groupId>
+		    <artifactId>jpx</artifactId>
+		    <version>1.2.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>

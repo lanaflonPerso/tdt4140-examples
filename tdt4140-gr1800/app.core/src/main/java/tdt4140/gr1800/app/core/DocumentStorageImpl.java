@@ -2,7 +2,7 @@ package tdt4140.gr1800.app.core;
 
 import java.io.IOException;
 
-public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
+public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L>, IDocumentPersistence<D, L> {
 
 	private L documentLocation;
 
@@ -25,8 +25,6 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 	protected abstract void setDocument(D document);
 
 	protected abstract D createDocument();
-	protected abstract D loadDocument(L storage) throws IOException;
-	protected abstract void storeDocument(D document, L storage) throws IOException;
 	
 	@Override
 	public void newDocument() {
@@ -35,12 +33,20 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 
 	@Override
 	public void openDocument(L storage) throws IOException {
-		setDocumentAndLocation(loadDocument(storage), storage);
+		try {
+			setDocumentAndLocation(loadDocument(storage), storage);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
 	public void saveDocument() throws IOException {
-		storeDocument(getDocument(), getDocumentLocation());
+		try {
+			saveDocument(getDocument(), getDocumentLocation());
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	public void saveDocumentAs(L documentLocation) throws IOException {
@@ -54,7 +60,7 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L> {
 		}
 	}
 	
-	public void saveCopyAs(L documentLocation) throws IOException {
-		storeDocument(getDocument(), documentLocation);
+	public void saveCopyAs(L documentLocation) throws Exception {
+		saveDocument(getDocument(), documentLocation);
 	}
 }
