@@ -1,5 +1,7 @@
 package tdt4140.gr1800.app.ui;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.Iterator;
 
 import fxmapcontrol.Location;
@@ -7,27 +9,29 @@ import fxmapcontrol.MapBase;
 import fxmapcontrol.MapItemsControl;
 import fxmapcontrol.MapNode;
 import fxmapcontrol.MapTileLayer;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import tdt4140.gr1800.app.core.App;
 import tdt4140.gr1800.app.core.GeoLocated;
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.IGeoLocationsListener;
 import tdt4140.gr1800.app.core.LatLong;
+import tdt4140.gr1800.app.doc.IDocumentListener;
+import tdt4140.gr1800.app.doc.IDocumentStorage;
 
-public class FxAppController implements IGeoLocationsListener {
+public class FxAppController implements IDocumentListener<Collection<GeoLocations>, File> {
 
 	@FXML
-	private FileMenuController fileMenuController;
+	FileMenuController fileMenuController;
 
 	@FXML
 	private ComboBox<String> geoLocationsSelector;
 
 	@FXML
-	private MapBase mapView;
+	MapBase mapView;
 	
-	private MapItemsControl<MapNode> markersParent;
+	MapItemsControl<MapNode> markersParent;
 	
 	@FXML
 	private Slider zoomSlider;
@@ -37,8 +41,9 @@ public class FxAppController implements IGeoLocationsListener {
 	@FXML
 	public void initialize() {
 		app = new App();
-		fileMenuController.setDocumentStorage(app.getDocumentStorage());
-		fileMenuController.setOnDocumentChanged(documentStorage -> initMapMarkers());
+		IDocumentStorage<File> documentStorage = app.getDocumentStorage();
+		fileMenuController.setDocumentStorage(documentStorage);
+		documentStorage.addDocumentStorageListener(this);
 
 		geoLocationsSelector.getSelectionModel().selectedItemProperty().addListener((stringProperty, oldValue, newValue) -> updateGeoLocations());
 
@@ -48,9 +53,23 @@ public class FxAppController implements IGeoLocationsListener {
 		});
 		markersParent = new MapItemsControl<MapNode>();
 		mapView.getChildren().add(markersParent);
-		
-		app.addGeoLocationsListener(this);
 	}
+
+	//
+
+	@Override
+	public void documentLocationChanged(File documentLocation, File oldDocumentLocation) {
+	}
+	@Override
+	public void documentChanged(Collection<GeoLocations> document, Collection<GeoLocations> oldDocument) {
+		if (Platform.isFxApplicationThread()) {
+			initMapMarkers();
+		} else {
+			Platform.runLater(() -> initMapMarkers());
+		}
+	}
+
+	//
 
 	private Object updateGeoLocations() {
 		return null;
@@ -99,10 +118,5 @@ public class FxAppController implements IGeoLocationsListener {
 			}
 		}
 		return new LatLong(latSum / num, lonSum / num);
-	}
-
-	@Override
-	public void geoLocationsUpdated(GeoLocations geoLocations) {
-		initMapMarkers();
 	}
 }

@@ -8,6 +8,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import tdt4140.gr1800.app.doc.IDocumentStorage;
+
 public class AppTest {
 
 	private App app;

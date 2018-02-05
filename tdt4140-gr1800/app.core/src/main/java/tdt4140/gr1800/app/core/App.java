@@ -9,6 +9,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import tdt4140.gr1800.app.doc.DocumentStorageImpl;
+import tdt4140.gr1800.app.doc.IDocumentImporter;
+import tdt4140.gr1800.app.doc.IDocumentLoader;
+import tdt4140.gr1800.app.doc.IDocumentPersistence;
+import tdt4140.gr1800.app.doc.IDocumentStorage;
 import tdt4140.gr1800.app.gpx.GpxDocumentConverter;
 import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
 
@@ -67,40 +72,6 @@ public class App {
 		return result;
 	}
 
-	public void setGeoLocations(Collection<GeoLocations> geoLocations) {
-		this.geoLocations = new ArrayList<>(geoLocations);
-		fireGeoLocationsUpdated(null);
-	}
-
-	public void addGeoLocations(GeoLocations geoLocations) {
-		if (hasGeoLocations(geoLocations.getName())) {
-			throw new IllegalArgumentException("Duplicate geo-locations name: " + geoLocations.getName());
-		}
-		this.geoLocations.add(geoLocations);
-		fireGeoLocationsUpdated(geoLocations);
-	}
-	
-	public void removeGeoLocations(GeoLocations geoLocations) {
-		this.geoLocations.remove(geoLocations);
-		fireGeoLocationsUpdated(geoLocations);
-	}
-
-	private Collection<IGeoLocationsListener> geoLocationsListeners = new ArrayList<>();
-	
-	public void addGeoLocationsListener(IGeoLocationsListener listener) {
-		geoLocationsListeners.add(listener);
-	}
-
-	public void removeGeoLocationsListener(IGeoLocationsListener listener) {
-		geoLocationsListeners.remove(listener);
-	}
-
-	protected void fireGeoLocationsUpdated(GeoLocations geoLocations) {
-		for (IGeoLocationsListener listener : geoLocationsListeners) {
-			listener.geoLocationsUpdated(geoLocations);
-		}
-	}
-
 	// 
 
 	private IDocumentPersistence<Collection<GeoLocations>, File> documentPersistence = new IDocumentPersistence<Collection<GeoLocations>, File>() {
@@ -125,7 +96,9 @@ public class App {
 
 		@Override
 		protected void setDocument(Collection<GeoLocations> document) {
-			setGeoLocations(document);
+			Collection<GeoLocations> oldDocument = getDocument();
+			App.this.geoLocations = document;
+			fireDocumentChanged(oldDocument);
 		}
 
 		@Override

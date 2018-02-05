@@ -11,8 +11,8 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.IDocumentLoader;
 import tdt4140.gr1800.app.core.LatLong;
+import tdt4140.gr1800.app.doc.IDocumentLoader;
 
 public class GpxDocumentConverter implements IDocumentLoader<Collection<GeoLocations>, File> {
 

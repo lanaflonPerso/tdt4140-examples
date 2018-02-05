@@ -6,6 +6,10 @@
   xmlns="http://www.topografix.com/GPX/1/0"
   xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
 
+<metadata>
+	<bounds minlat="51.396017" minlon="4.498043" maxlat="51.430402" maxlon="4.556108"/>
+</metadata>
+
 <wpt lat="51.39709" lon="4.501519">
    <name>START</name>
 </wpt>

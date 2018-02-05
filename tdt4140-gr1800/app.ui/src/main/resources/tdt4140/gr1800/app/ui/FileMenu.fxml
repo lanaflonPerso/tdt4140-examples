@@ -7,14 +7,14 @@
 
 <Menu xmlns:fx="http://javafx.com/fxml" text="File" fx:controller="tdt4140.gr1800.app.ui.FileMenuController">
 	<items>
-		<MenuItem text="New" onAction="#handleNewAction"/>
-		<MenuItem text="Open..." onAction="#handleOpenAction"/>
+		<MenuItem text="New" 		accelerator="Meta+N" 	onAction="#handleNewAction"/>
+		<MenuItem text="Open..."  	accelerator="Meta+O"		onAction="#handleOpenAction"/>
 		<Menu fx:id="recentMenu" text="Open Recent"/>
 		<SeparatorMenuItem/>
-		<MenuItem text="Save" onAction="#handleSaveAction"/>
-		<MenuItem text="Save As..." onAction="#handleSaveAsAction"/>
-		<MenuItem text="Save Copy As..." onAction="#handleSaveCopyAsAction"/>
+		<MenuItem text="Save"		accelerator="Meta+S"		onAction="#handleSaveAction"/>
+		<MenuItem text="Save As..." 							onAction="#handleSaveAsAction"/>
+		<MenuItem text="Save Copy As..." 					onAction="#handleSaveCopyAsAction"/>
 		<SeparatorMenuItem/>
-		<MenuItem text="Import..." onAction="#handleImportAction"/>
+		<MenuItem text="Import..." 							onAction="#handleImportAction"/>
 	</items>
 </Menu>
