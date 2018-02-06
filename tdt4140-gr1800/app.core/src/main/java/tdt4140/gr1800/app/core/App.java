@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,8 +78,8 @@ public class App {
 	private IDocumentPersistence<Collection<GeoLocations>, File> documentPersistence = new IDocumentPersistence<Collection<GeoLocations>, File>() {
 		
 		@Override
-		public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
-			return geoLocationsLoader.loadLocations(new FileInputStream(documentLocation));
+		public Collection<GeoLocations> loadDocument(InputStream inputStream) throws Exception {
+			return geoLocationsLoader.loadLocations(inputStream);
 		}
 
 		@Override
@@ -106,20 +107,24 @@ public class App {
 			return new ArrayList<GeoLocations>();
 		}
 
-		public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
-			return documentPersistence.loadDocument(documentLocation);
+		protected InputStream toInputStream(File storage) throws IOException {
+			return new FileInputStream(storage);
+		}
+		
+		public Collection<GeoLocations> loadDocument(InputStream inputStream) throws Exception {
+			return documentPersistence.loadDocument(inputStream);
 		}
 		
 		public void saveDocument(Collection<GeoLocations> document, File documentLocation) throws Exception {
 			documentPersistence.saveDocument(document, documentLocation);
 		}
 		
-		public Collection<IDocumentImporter<File>> getDocumentImporters() {
-			return documentLoaders.stream().map(loader -> new IDocumentImporter<File>() {
+		public Collection<IDocumentImporter> getDocumentImporters() {
+			return documentLoaders.stream().map(loader -> new IDocumentImporter() {
 				@Override
-				public void importDocument(File file) throws IOException {
+				public void importDocument(InputStream inputStream) throws IOException {
 					try {
-						setDocumentAndLocation(loader.loadDocument(file), null);
+						setDocumentAndLocation(loader.loadDocument(inputStream), null);
 					} catch (Exception e) {
 						throw new IOException(e);
 					} 
@@ -132,17 +137,17 @@ public class App {
 		return documentStorage;
 	}
 
-	private Collection<IDocumentLoader<Collection<GeoLocations>, File>> documentLoaders = Arrays.asList(
-		new IDocumentLoader<Collection<GeoLocations>, File>() {
+	private Collection<IDocumentLoader<Collection<GeoLocations>>> documentLoaders = Arrays.asList(
+		new IDocumentLoader<Collection<GeoLocations>>() {
 			private GpxDocumentConverter gpxConverter = new GpxDocumentConverter();
 			@Override
-			public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
-				return gpxConverter.loadDocument(documentLocation);
+			public Collection<GeoLocations> loadDocument(InputStream inputStream) throws Exception {
+				return gpxConverter.loadDocument(inputStream);
 			}
 		}
 	);
 	
-	public Iterable<IDocumentLoader<Collection<GeoLocations>, File>> getDocumentLoaders() {
+	public Iterable<IDocumentLoader<Collection<GeoLocations>>> getDocumentLoaders() {
 		return documentLoaders;
 	}
 }

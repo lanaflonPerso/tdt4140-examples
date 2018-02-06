@@ -1,6 +1,7 @@
 package tdt4140.gr1800.app.doc;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -60,11 +61,13 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L>, 
 	public void newDocument() {
 		setDocumentAndLocation(createDocument(), null);
 	}
+	
+	protected abstract InputStream toInputStream(L storage) throws IOException;
 
 	@Override
 	public void openDocument(L storage) throws IOException {
 		try {
-			setDocumentAndLocation(loadDocument(storage), storage);
+			setDocumentAndLocation(loadDocument(toInputStream(storage)), storage);
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

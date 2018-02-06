@@ -1,5 +1,7 @@
 package tdt4140.gr1800.app.doc;
 
-public interface IDocumentLoader<D, L> {
-	public D loadDocument(L documentLocation) throws Exception;
+import java.io.InputStream;
+
+public interface IDocumentLoader<D> {
+	public D loadDocument(InputStream inputStream) throws Exception;
 }

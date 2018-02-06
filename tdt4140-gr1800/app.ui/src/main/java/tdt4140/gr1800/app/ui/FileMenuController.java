@@ -1,14 +1,19 @@
 package tdt4140.gr1800.app.ui;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import tdt4140.gr1800.app.doc.IDocumentImporter;
 import tdt4140.gr1800.app.doc.IDocumentStorage;
@@ -130,22 +135,65 @@ public class FileMenuController {
 	}
 
 	@FXML
-	public void handleImportAction() {
+	public void handleFileImportAction() {
 		FileChooser fileChooser = getFileChooser();
 		File selection = fileChooser.showOpenDialog(null);
 //		String path = selection.getPath();
 //		int pos = path.lastIndexOf('.');
 //		String ext = (pos > 0 ? path.substring(pos + 1) : null);
-		handleImportAction(selection);
+		handleFileImportAction(selection);
 	}
 
-	void handleImportAction(File selection) {
-		for (IDocumentImporter<File> importer : documentStorage.getDocumentImporters()) {
+	void handleFileImportAction(File selection) {
+		for (IDocumentImporter importer : documentStorage.getDocumentImporters()) {
 			try {
-				importer.importDocument(selection);
+				importer.importDocument(new FileInputStream(selection));
 				break;
 			} catch (Exception e) {
 			}
 		}
+	}
+	
+	private TextInputDialog inputDialog;
+
+	@FXML
+	public void handleURLImportAction() {
+		if (inputDialog == null) {
+			inputDialog = new TextInputDialog();
+		}
+		inputDialog.setTitle("Import from URL");
+		inputDialog.setHeaderText("Enter URL to import from");
+		inputDialog.setContentText("Enter URL: ");
+		// https://developer.garmin.com/downloads/connect-api/sample_file.gpx
+		URL url = null;
+		while (url == null) {
+			Optional<String> result = inputDialog.showAndWait();
+			if (! result.isPresent()) {
+				return;
+			}
+			try {
+				url = new URL(result.get());
+				if (handleURLImportAction(url)) {
+					return;
+				}
+				url = null;
+				inputDialog.setHeaderText("Problems reading it...");
+				inputDialog.setContentText("Enter another URL: ");
+			} catch (MalformedURLException e1) {
+				inputDialog.setContentText("Enter a valid URL: ");
+			}
+		}
+	}
+
+	boolean handleURLImportAction(URL url) {
+		for (IDocumentImporter importer : documentStorage.getDocumentImporters()) {
+			try {
+				importer.importDocument(url.openStream());
+				return true;
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+		}
+		return false;
 	}
 }

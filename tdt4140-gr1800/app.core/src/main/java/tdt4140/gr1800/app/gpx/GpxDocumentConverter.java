@@ -1,6 +1,6 @@
 package tdt4140.gr1800.app.gpx;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -14,13 +14,13 @@ import tdt4140.gr1800.app.core.GeoLocations;
 import tdt4140.gr1800.app.core.LatLong;
 import tdt4140.gr1800.app.doc.IDocumentLoader;
 
-public class GpxDocumentConverter implements IDocumentLoader<Collection<GeoLocations>, File> {
+public class GpxDocumentConverter implements IDocumentLoader<Collection<GeoLocations>> {
 
 	private GpxDocumentLoader gpxLoader = new GpxDocumentLoader();
 	
 	@Override
-	public Collection<GeoLocations> loadDocument(File documentLocation) throws Exception {
-		GPX gpx = gpxLoader.loadDocument(documentLocation.toURI().toURL());
+	public Collection<GeoLocations> loadDocument(InputStream inputStream) throws Exception {
+		GPX gpx = gpxLoader.loadDocument(inputStream);
 		return convert(gpx);
 	}
 

@@ -25,7 +25,7 @@ public class GpxPersistenceTest {
 	@Test
 	public void testLoadDocument() {
 		try {
-			GPX gpx = loader.loadDocument(getClass().getResource("sample1.gpx"));
+			GPX gpx = loader.loadDocument(getClass().getResourceAsStream("sample1.gpx"));
 			Assert.assertEquals(1, gpx.getTracks().size());
 			Assert.assertEquals(1, gpx.getTracks().get(0).getSegments().size());
 			Assert.assertEquals(3, gpx.getTracks().get(0).getSegments().get(0).getPoints().size());
@@ -37,7 +37,7 @@ public class GpxPersistenceTest {
 	@Test
 	public void testConvertSample1() {
 		try {
-			GPX gpx = loader.loadDocument(getClass().getResource("sample1.gpx"));
+			GPX gpx = loader.loadDocument(getClass().getResourceAsStream("sample1.gpx"));
 			Collection<GeoLocations> geoLocations = converter.convert(gpx);
 			Assert.assertEquals(1, geoLocations.size());
 			GeoLocations track = geoLocations.iterator().next();
@@ -53,7 +53,7 @@ public class GpxPersistenceTest {
 	@Test
 	public void testConvertAchterbroekRoute() {
 		try {
-			GPX gpx = loader.loadDocument(getClass().getResource("Achterbroek-route.gpx"));
+			GPX gpx = loader.loadDocument(getClass().getResourceAsStream("Achterbroek-route.gpx"));
 			Collection<GeoLocations> geoLocations = converter.convert(gpx);
 			Assert.assertEquals(2, geoLocations.size());
 			Iterator<GeoLocations> iterator = geoLocations.iterator();
@@ -74,7 +74,7 @@ public class GpxPersistenceTest {
 	@Test
 	public void testConvertAchterbroekTrack() {
 		try {
-			GPX gpx = loader.loadDocument(getClass().getResource("Achterbroek-track.gpx"));
+			GPX gpx = loader.loadDocument(getClass().getResourceAsStream("Achterbroek-track.gpx"));
 			Collection<GeoLocations> geoLocations = converter.convert(gpx);
 			Assert.assertEquals(2, geoLocations.size());
 			Iterator<GeoLocations> iterator = geoLocations.iterator();

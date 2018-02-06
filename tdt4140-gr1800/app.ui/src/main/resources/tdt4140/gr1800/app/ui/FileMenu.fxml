@@ -15,6 +15,9 @@
 		<MenuItem text="Save As..." 							onAction="#handleSaveAsAction"/>
 		<MenuItem text="Save Copy As..." 					onAction="#handleSaveCopyAsAction"/>
 		<SeparatorMenuItem/>
-		<MenuItem text="Import..." 							onAction="#handleImportAction"/>
+		<Menu text="Import">
+			<MenuItem text="File..." 						onAction="#handleFileImportAction"/>
+			<MenuItem text="URL..." 							onAction="#handleURLImportAction"/>
+		</Menu>
 	</items>
 </Menu>

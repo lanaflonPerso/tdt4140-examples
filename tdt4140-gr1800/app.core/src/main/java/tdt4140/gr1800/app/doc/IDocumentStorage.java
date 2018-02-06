@@ -14,5 +14,5 @@ public interface IDocumentStorage<L> {
 	public void openDocument(L documentLocation) throws IOException;
 	public void saveDocument() throws IOException;
 
-	public Collection<IDocumentImporter<L>> getDocumentImporters();
+	public Collection<IDocumentImporter> getDocumentImporters();
 }
