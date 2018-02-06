@@ -81,10 +81,14 @@ public class FileMenuController {
 	
 	@FXML
 	public void handleSaveAction() {
-		try {
-			documentStorage.saveDocument();
-		} catch (IOException e) {
-			// TODO
+		if (documentStorage.getDocumentLocation() == null) {
+			handleSaveAsAction();
+		} else {
+			try {
+				documentStorage.saveDocument();
+			} catch (IOException e) {
+				// TODO
+			}
 		}
 	}
 	
