@@ -15,5 +15,6 @@
 		<module>app.core</module>
 		<module>FxMapControl</module>
 		<module>app.ui</module>
+		<module>web.server</module>
 	</modules>
 </project>
