@@ -62,6 +62,7 @@ public class GpxDocumentConverter implements IDocumentLoader<Collection<GeoLocat
 				String name = (singleTrack ? trackName : String.format(trackSegmentFormat, trackName, segmentCount));
 				GeoLocations gl = new GeoLocations(name, convert(segment.getPoints()));
 				gl.setPath(true);
+				gl.addTags(Track.class.getName().toLowerCase());
 				geoLocations.add(gl);
 			}
 		}
@@ -70,10 +71,13 @@ public class GpxDocumentConverter implements IDocumentLoader<Collection<GeoLocat
 			String routeName = (route.getName().isPresent() ? String.format(routeNameFormat, route.getName().get()) : String.format(routeCountFormat, routeCount));
 			GeoLocations gl = new GeoLocations(routeName, convert(route.getPoints()));
 			gl.setPath(true);
+			gl.addTags(Route.class.getName().toLowerCase());
 			geoLocations.add(gl);
 		}
 		if (! gpx.getWayPoints().isEmpty()) {
-			geoLocations.add(new GeoLocations("Waypoints", convert(gpx.getWayPoints())));
+			GeoLocations gl = new GeoLocations("Waypoints", convert(gpx.getWayPoints()));
+			gl.addTags(WayPoint.class.getName().toLowerCase());
+			geoLocations.add(gl);
 		}
 		return geoLocations;
 	}

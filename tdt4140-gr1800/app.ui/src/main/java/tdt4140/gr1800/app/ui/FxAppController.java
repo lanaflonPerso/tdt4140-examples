@@ -75,6 +75,8 @@ public class FxAppController implements IDocumentListener<Collection<GeoLocation
 		return null;
 	}
 
+	private IMapMarkerProvider mapMarkerProvider = new TagBasedMapMarkerProvider();
+	
 	private void initMapMarkers() {
 		markersParent.getItems().clear();
 		geoLocationsSelector.getItems().clear();
@@ -82,7 +84,7 @@ public class FxAppController implements IDocumentListener<Collection<GeoLocation
 			GeoLocations geoLocations = app.getGeoLocations(geoLocationName);
 			MapMarker lastMarker = null;
 			for (GeoLocated geoLoc : geoLocations) {
-				MapMarker mapMarker = new MapMarker(geoLoc.getLatLong());
+				MapMarker mapMarker = mapMarkerProvider.getMapMarker(geoLoc, geoLocations);
 				markersParent.getItems().add(mapMarker);
 				if (geoLocations.isPath() && lastMarker != null) {
 					MapPathLine pathLine = new MapPathLine(lastMarker, mapMarker);

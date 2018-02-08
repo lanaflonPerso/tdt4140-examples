@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L>, IDocumentPersistence<D, L> {
+public abstract class AbstractDocumentStorageImpl<D, L> implements IDocumentStorage<L>, IDocumentPersistence<D, L> {
 
 	private L documentLocation;
 
@@ -66,8 +66,8 @@ public abstract class DocumentStorageImpl<D, L> implements IDocumentStorage<L>, 
 
 	@Override
 	public void openDocument(L storage) throws IOException {
-		try {
-			setDocumentAndLocation(loadDocument(toInputStream(storage)), storage);
+		try (InputStream input = toInputStream(storage)){
+			setDocumentAndLocation(loadDocument(input), storage);
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

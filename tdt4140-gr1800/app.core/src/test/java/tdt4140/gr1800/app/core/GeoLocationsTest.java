@@ -38,6 +38,15 @@ public class GeoLocationsTest {
 		}
 	}
 
+	public static void assertGeoLocations(GeoLocations geoLocations, GeoLocations geoLocations2) {
+		Iterator<GeoLocated> it = geoLocations.iterator(), it2 = geoLocations2.iterator();
+		while (it.hasNext()) {
+			Assert.assertTrue(it2.hasNext());
+			checkGeoLocated(it2.next(), it.next());
+		}
+		Assert.assertFalse(it2.hasNext());
+	}
+
 	@Test
 	public void testAddLocation() {
 		Assert.assertEquals(0, geoLocations.size());

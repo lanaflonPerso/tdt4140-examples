@@ -5,12 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import tdt4140.gr1800.app.doc.DocumentStorageImpl;
+import tdt4140.gr1800.app.doc.AbstractDocumentStorageImpl;
 import tdt4140.gr1800.app.doc.IDocumentImporter;
 import tdt4140.gr1800.app.doc.IDocumentLoader;
 import tdt4140.gr1800.app.doc.IDocumentPersistence;
@@ -20,7 +21,7 @@ import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
 
 public class App {
 
-	private GeoLocationsPersistence geoLocationsLoader = new GeoLocationsJsonPersistence();
+	private GeoLocationsPersistence geoLocationsPersistence = new GeoLocationsJsonPersistence();
 	
 	private Collection<GeoLocations> geoLocations = null;
 
@@ -79,16 +80,18 @@ public class App {
 		
 		@Override
 		public Collection<GeoLocations> loadDocument(InputStream inputStream) throws Exception {
-			return geoLocationsLoader.loadLocations(inputStream);
+			return geoLocationsPersistence.loadLocations(inputStream);
 		}
 
 		@Override
 		public void saveDocument(Collection<GeoLocations> document, File documentLocation) throws Exception {
-			geoLocationsLoader.saveLocations(document, new FileOutputStream(documentLocation));
+			try (OutputStream output = new FileOutputStream(documentLocation)) {
+				geoLocationsPersistence.saveLocations(document, output);
+			}
 		}
 	};
 
-	private DocumentStorageImpl<Collection<GeoLocations>, File> documentStorage = new DocumentStorageImpl<Collection<GeoLocations>, File>() {
+	private AbstractDocumentStorageImpl<Collection<GeoLocations>, File> documentStorage = new AbstractDocumentStorageImpl<Collection<GeoLocations>, File>() {
 
 		@Override
 		protected Collection<GeoLocations> getDocument() {

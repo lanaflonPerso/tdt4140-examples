@@ -3,6 +3,7 @@ package tdt4140.gr1800.app.ui;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -146,8 +147,8 @@ public class FileMenuController {
 
 	void handleFileImportAction(File selection) {
 		for (IDocumentImporter importer : documentStorage.getDocumentImporters()) {
-			try {
-				importer.importDocument(new FileInputStream(selection));
+			try (InputStream input = new FileInputStream(selection)) {
+				importer.importDocument(input);
 				break;
 			} catch (Exception e) {
 			}
@@ -187,8 +188,8 @@ public class FileMenuController {
 
 	boolean handleURLImportAction(URL url) {
 		for (IDocumentImporter importer : documentStorage.getDocumentImporters()) {
-			try {
-				importer.importDocument(url.openStream());
+			try (InputStream input = url.openStream()) {
+				importer.importDocument(input);
 				return true;
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
