@@ -7,13 +7,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GeoLocationsTest {
+public class GeoLocationsTest extends TimedTaggedTest {
 
 	private GeoLocations geoLocations;
 	
 	@Before
 	public void setUp() {
-		geoLocations = new GeoLocations();
+		setUp(geoLocations = new GeoLocations());
 	}
 
 	@Test

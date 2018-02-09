@@ -1,16 +1,13 @@
 package tdt4140.gr1800.app.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GeoLocations implements Iterable<GeoLocated>, Tagged {
+public class GeoLocations extends TimedTaggedImpl implements Iterable<GeoLocated>, Tagged, Timed {
 
 	private String name;
 	
@@ -21,7 +18,7 @@ public class GeoLocations implements Iterable<GeoLocated>, Tagged {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	private Collection<GeoLocated> locations = new ArrayList<GeoLocated>();
 	private boolean path = false;
 	
@@ -35,7 +32,7 @@ public class GeoLocations implements Iterable<GeoLocated>, Tagged {
 		this(latLongs);
 		setName(name);
 	}
-	
+
 	public boolean isPath() {
 		return path;
 	}
@@ -84,27 +81,5 @@ public class GeoLocations implements Iterable<GeoLocated>, Tagged {
 	@Override
 	public Iterator<GeoLocated> iterator() {
 		return locations.iterator();
-	}
-	
-	//
-	
-	private Set<String> tags = null;
-
-	@Override
-	public boolean hasTags(String... tags) {
-		return this.tags != null && this.tags.containsAll(Arrays.asList(tags));
-	}
-	
-	public void addTags(String... tags) {
-		if (this.tags == null) {
-			this.tags = new HashSet<>();
-		}
-		this.tags.addAll(Arrays.asList(tags));
-	}
-	
-	public void removeTags(String... tags) {
-		if (this.tags != null) {
-			this.tags.removeAll(Arrays.asList(tags));
-		}
 	}
 }
