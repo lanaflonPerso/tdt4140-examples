@@ -35,7 +35,7 @@ public class AppTest {
 			Assert.fail("Couldn't open " + file);
 		}
 		Assert.assertEquals(file, documentStorage.getDocumentLocation());
-		GeoLocationsPersistenceTest.testGeoLocationsDotJson(app.getGeoLocations((String[]) null));
+		GeoLocationsStreamPersistenceTest.testGeoLocationsDotJson(app.getGeoLocations((String[]) null));
 	}
 	
 	@Test

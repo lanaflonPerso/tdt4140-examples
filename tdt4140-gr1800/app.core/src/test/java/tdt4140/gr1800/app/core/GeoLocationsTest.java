@@ -67,7 +67,7 @@ public class GeoLocationsTest extends TimedTaggedTest {
 	}
 	
 	@Test
-	public void testFindLocationsNearby() {
+	public void testFindLocationsNearby() { 
 		LatLong latLong = new LatLong(0, 0);
 		Assert.assertTrue(geoLocations.findLocationsNearby(latLong, 0).isEmpty());
 		geoLocations.addLocation(latLong);

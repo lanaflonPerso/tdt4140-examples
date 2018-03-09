@@ -21,7 +21,7 @@ import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
 
 public class App {
 
-	private GeoLocationsPersistence geoLocationsPersistence = new GeoLocationsJsonPersistence();
+	private GeoLocationsStreamPersistence geoLocationsPersistence = new GeoLocationsJsonPersistence();
 	
 	private Collection<GeoLocations> geoLocations = null;
 

@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.GeoLocationsPersistence;
+import tdt4140.gr1800.app.core.GeoLocationsStreamPersistence;
 
-public class GeoLocationsJsonPersistence implements GeoLocationsPersistence {
+public class GeoLocationsJsonPersistence implements GeoLocationsStreamPersistence {
 
 	private final ObjectMapper objectMapper;
 

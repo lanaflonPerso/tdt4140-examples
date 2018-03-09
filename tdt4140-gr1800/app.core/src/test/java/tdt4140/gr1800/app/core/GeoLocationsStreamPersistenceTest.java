@@ -2,6 +2,8 @@ package tdt4140.gr1800.app.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,9 +14,9 @@ import org.junit.Test;
 
 import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
 
-public class GeoLocationsPersistenceTest {
+public class GeoLocationsStreamPersistenceTest {
 
-	private GeoLocationsPersistence persistence;
+	private GeoLocationsStreamPersistence persistence;
 	
 	@Before
 	public void setUp() {

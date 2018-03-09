@@ -10,13 +10,13 @@ import org.junit.Test;
 
 import tdt4140.gr1800.app.core.GeoLocated;
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.GeoLocationsPersistence;
+import tdt4140.gr1800.app.core.GeoLocationsStreamPersistence;
 import tdt4140.gr1800.app.core.LatLong;
 import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
 
 public class GeoLocationsServerIT {
 
-	private GeoLocationsPersistence persistence = new GeoLocationsJsonPersistence();
+	private GeoLocationsStreamPersistence persistence = new GeoLocationsJsonPersistence();
 	
 	private Collection<GeoLocations> get(String path, int size) throws Exception {
 		URL url = new URL("http://localhost:8080/geo" + path);

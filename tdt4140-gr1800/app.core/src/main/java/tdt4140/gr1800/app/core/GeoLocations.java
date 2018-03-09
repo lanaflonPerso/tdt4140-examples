@@ -9,6 +9,16 @@ import java.util.stream.Collectors;
 
 public class GeoLocations extends TimedTaggedImpl implements Iterable<GeoLocated>, Tagged, Timed {
 
+	private final GeoLocationsOwner owner;
+	
+	public GeoLocations(GeoLocationsOwner owner) {
+		this.owner = owner;
+	}
+
+	public GeoLocationsOwner getOwner() {
+		return owner;
+	}
+	
 	private String name;
 	
 	public String getName() {
@@ -19,12 +29,23 @@ public class GeoLocations extends TimedTaggedImpl implements Iterable<GeoLocated
 		this.name = name;
 	}
 
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	private Collection<GeoLocated> locations = new ArrayList<GeoLocated>();
 	private boolean path = false;
 	
-	public GeoLocations(LatLong...latLongs) {
-		for (int i = 0; i < latLongs.length; i++) {
-			addLocation(latLongs[i]);
+	public GeoLocations(GeoLocated...geoLocs) {
+		this((GeoLocationsOwner) null);
+		for (int i = 0; i < geoLocs.length; i++) {
+			addLocation(geoLocs[i]);
 		}
 	}
 
@@ -60,7 +81,7 @@ public class GeoLocations extends TimedTaggedImpl implements Iterable<GeoLocated
 
 	//
 	
-	public void addLocation(LatLong geoLoc) {
+	public void addLocation(GeoLocated geoLoc) {
 		locations.add(geoLoc);
 	}
 
