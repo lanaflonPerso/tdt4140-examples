@@ -9,33 +9,49 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<jackson-version>2.9.3</jackson-version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.3</version>
+			<version>${jackson-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.3</version>
+			<version>${jackson-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.9.3</version>
+			<version>${jackson-version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.fasterxml.jackson.dataformat</groupId>
-    			<artifactId>jackson-dataformat-xml</artifactId>
-    			<version>2.9.3</version>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson-version}</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/io.jenetics/jpx -->
 		<dependency>
-		    <groupId>io.jenetics</groupId>
-		    <artifactId>jpx</artifactId>
-		    <version>1.2.3</version>
+			<groupId>io.jenetics</groupId>
+			<artifactId>jpx</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.grundid.opendatalab</groupId>
+			<artifactId>geojson-jackson</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.hsqldb</groupId>
+		    <artifactId>hsqldb</artifactId>
+		    <version>2.4.0</version>
 		</dependency>
 
 		<dependency>
