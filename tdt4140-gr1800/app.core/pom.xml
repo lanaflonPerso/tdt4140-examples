@@ -49,9 +49,9 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>org.hsqldb</groupId>
-		    <artifactId>hsqldb</artifactId>
-		    <version>2.4.0</version>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.4.0</version>
 		</dependency>
 
 		<dependency>
@@ -84,6 +84,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>verify</id>
+						<phase>verify</phase>
+						<configuration>
+							<configLocation>../checkstyle.xml</configLocation>
+							<failsOnError>false</failsOnError>
+							<encoding>UTF-8</encoding>
+							<consoleOutput>true</consoleOutput>
+							<linkXRef>false</linkXRef>
+						</configuration>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
 		</plugins>
 	</build>
 
