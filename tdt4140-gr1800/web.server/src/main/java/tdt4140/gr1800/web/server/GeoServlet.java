@@ -44,7 +44,9 @@ public class GeoServlet extends HttpServlet {
 			dbConnectionUrl = dbConnectionParam;
 		}
 		try {
-			dbAccess = new DbAccessImpl(dbConnectionUrl);
+			final DbAccessImpl dbAccess = new DbAccessImpl(dbConnectionUrl);
+			dbAccess.executeStatements("schema.sql", false);
+			this.dbAccess = dbAccess;
 		} catch (final SQLException e) {
 			throw new ServletException("Error when initializing database connection (" + dbConnectionUrl + "): " + e, e);
 		}
@@ -55,6 +57,7 @@ public class GeoServlet extends HttpServlet {
 		final RestEntity<GeoLocation> geoLocationEntity = new RestEntity<>();
 
 		final RestRelation<Void, Person> rootPersonRelation = new RootPersonsRelation("persons", personEntity);
+		rootPersonRelation.setDbAccess(dbAccess);
 		rootEntity.addRelation(rootPersonRelation);
 		final RestRelation<Person, ?> personGeoLocationsRelation = new PersonGeoLocationsRelation("geoLocations", geoLocationsEntity);
 		personGeoLocationsRelation.setDbAccess(dbAccess);
@@ -105,7 +108,7 @@ public class GeoServlet extends HttpServlet {
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
 		try (OutputStream output = response.getOutputStream()) {
-			objectMapper.writeValue(output, result);
+			objectMapper.writerWithDefaultPrettyPrinter().writeValue(output, result);
 		} catch (final Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

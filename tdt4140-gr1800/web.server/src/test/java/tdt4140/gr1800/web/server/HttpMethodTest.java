@@ -222,12 +222,6 @@ public class HttpMethodTest {
 		Assert.assertEquals(false, dbAccessRecord.get("getGeoLocations"));
 		Assert.assertTrue(result instanceof Collection<?>);
 		Assert.assertEquals(2, ((Collection<?>) result).size());
-
-		try {
-			objectMapper.writerWithDefaultPrettyPrinter().writeValue(System.out, person);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test

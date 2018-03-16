@@ -67,8 +67,9 @@ public class GeoLocationsServerIT {
 		try (OutputStream conOut = con.getOutputStream()) {
 			conOut.write(bytes);
 		}
-		try (InputStream conIn = url.openStream()) {
+		try (InputStream conIn = con.getInputStream()) {
 			final JsonNode jsonTree = objectMapper.readTree(conIn);
+			//			System.out.println(jsonTree);
 			Assert.assertTrue(jsonTree instanceof ObjectNode);
 			Assert.assertTrue(((ObjectNode) jsonTree).has("id"));
 			final Person conPerson = objectMapper.treeToValue(jsonTree, Person.class);
