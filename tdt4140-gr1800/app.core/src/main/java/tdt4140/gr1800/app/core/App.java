@@ -17,11 +17,11 @@ import tdt4140.gr1800.app.doc.IDocumentLoader;
 import tdt4140.gr1800.app.doc.IDocumentPersistence;
 import tdt4140.gr1800.app.doc.IDocumentStorage;
 import tdt4140.gr1800.app.gpx.GpxDocumentConverter;
-import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
+import tdt4140.gr1800.app.json.GeoLocationsPersistence;
 
 public class App {
 
-	private GeoLocationsStreamPersistence geoLocationsPersistence = new GeoLocationsJsonPersistence();
+	private GeoLocationsStreamPersistence geoLocationsPersistence = new GeoLocationsPersistence();
 	
 	private Collection<GeoLocations> geoLocations = null;
 

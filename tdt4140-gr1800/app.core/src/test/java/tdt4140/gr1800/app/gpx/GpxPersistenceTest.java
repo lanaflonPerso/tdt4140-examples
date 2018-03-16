@@ -1,4 +1,4 @@
-package tdt4140.gr1800.app.core;
+package tdt4140.gr1800.app.gpx;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.jenetics.jpx.GPX;
+import tdt4140.gr1800.app.core.GeoLocations;
 import tdt4140.gr1800.app.gpx.GpxDocumentConverter;
 import tdt4140.gr1800.app.gpx.GpxDocumentLoader;
 

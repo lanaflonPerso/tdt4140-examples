@@ -4,31 +4,41 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IdMap<T> {
+public class IdMap<T> implements IdProvider<T> {
 
 	protected Map<Integer, T> id2o = new HashMap<Integer, T>();
 	protected Map<T, Integer> o2id = new HashMap<T, Integer>();
 
-	public T get(int id) {
+	public int size() {
+		return o2id.size();
+	}
+
+	public T get(final int id) {
 		return id2o.get(id);
 	}
 
-	public int getId(T o) {
-		Integer id = o2id.get(o);
+	@Override
+	public boolean hasId(final T t) {
+		return o2id.containsKey(t);
+	}
+
+	@Override
+	public int getId(final T o) {
+		final Integer id = o2id.get(o);
 		return (id != null ? id : -1);
 	}
-	
+
 	public Collection<T> get() {
 		return o2id.keySet();
 	}
-	
+
 	public Collection<Integer> getIds() {
 		return id2o.keySet();
 	}
 
 	//
-	
-	void set(T o, int id) {
+
+	public void set(final T o, final int id) {
 		if (o2id.containsKey(o)) {
 			throw new IllegalStateException(o + " already has the id " + o2id.get(o));
 		}
@@ -38,32 +48,32 @@ public class IdMap<T> {
 		id2o.put(id, o);
 		o2id.put(o, id);
 	}
-	
-	void clear() {
+
+	public void clear() {
 		o2id.clear();
-		id2o.clear();		
-	}
-	
-	private void remove(T o, int id) {
-		o2id.remove(o);
-		id2o.remove(id);		
+		id2o.clear();
 	}
 
-	void remove(T o) {
+	private void remove(final T o, final int id) {
+		o2id.remove(o);
+		id2o.remove(id);
+	}
+
+	public void remove(final T o) {
 		if (o2id.containsKey(o)) {
 			remove(o, o2id.get(o));
 		}
 	}
 
-	void removeAll(Iterable<T> os) {
-		for (T o : os) {
+	public void removeAll(final Iterable<T> os) {
+		for (final T o : os) {
 			remove(o);
 		}
 	}
 
-	void remove(int id) {
+	public void remove(final int id) {
 		if (id2o.containsKey(id)) {
 			remove(id2o.get(id), id);
-		}		
+		}
 	}
 }

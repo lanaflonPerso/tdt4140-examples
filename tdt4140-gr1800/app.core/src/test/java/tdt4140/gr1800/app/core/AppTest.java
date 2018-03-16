@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import tdt4140.gr1800.app.doc.IDocumentStorage;
+import tdt4140.gr1800.app.json.GeoLocationsStreamPersistenceTest;
 
 public class AppTest {
 

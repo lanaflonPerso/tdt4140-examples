@@ -21,6 +21,7 @@ CREATE TABLE geoLocations (
 
 	date date NULL,
 	time time NULL,
+	zone varchar(20) NULL,
 );
 
 CREATE TABLE geoLocation (
@@ -36,6 +37,7 @@ CREATE TABLE geoLocation (
 
 	date date NULL,
 	time time NULL,
+	zone varchar(20) NULL,
 );
 
 CREATE TABLE tag (

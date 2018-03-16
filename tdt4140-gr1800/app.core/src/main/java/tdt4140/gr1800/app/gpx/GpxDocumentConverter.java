@@ -50,7 +50,7 @@ public class GpxDocumentConverter implements IDocumentLoader<Collection<GeoLocat
 	public void setRouteCountFormat(String routeCountFormat) {
 		this.routeCountFormat = routeCountFormat;
 	}
-	
+
 	public Collection<GeoLocations> convert(GPX gpx) throws Exception {
 		Collection<GeoLocations> geoLocations = new ArrayList<GeoLocations>();
 		int trackCount = 1;

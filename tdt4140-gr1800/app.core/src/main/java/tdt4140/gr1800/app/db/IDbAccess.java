@@ -6,12 +6,11 @@ import java.util.Collection;
 import tdt4140.gr1800.app.core.GeoLocated;
 import tdt4140.gr1800.app.core.GeoLocation;
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.GeoLocationsOwner;
 import tdt4140.gr1800.app.core.Person;
 
 /*
  * CRUD interface for our domain:
- * 
+ *
  * @startuml
  * class GeoLocationsOwner {
  * 	String id
@@ -37,7 +36,9 @@ import tdt4140.gr1800.app.core.Person;
  * @enduml
  */
 public interface IDbAccess {
-	
+
+	public IdProvider<Person> getPersonIdProvider();
+
 	// Create
 	public Person createPerson(String name, String email);
 	public GeoLocations createGeoLocations(Person owner);
@@ -48,14 +49,14 @@ public interface IDbAccess {
 	public Person getPerson(int id, boolean refresh);
 	public Person getPersonByName(String name, boolean refresh);
 	public Person getPersonByEmail(String email, boolean refresh);
-	
+
 	public Collection<GeoLocations> getGeoLocations(Person owner, boolean refresh);
-	
+
 	// Update
 	public void updatePersonData(Person person);
 	public void updateGeoLocationsData(GeoLocations geoLocations);
-	public void updateGeoLocationData(GeoLocations geoLocations, GeoLocations geoLocation);
-	
+	public void updateGeoLocationData(GeoLocations geoLocations, GeoLocation geoLocation);
+
 	// Delete
 	public void deletePerson(Person person);
 	public void deleteGeoLocations(GeoLocations geoLocations);

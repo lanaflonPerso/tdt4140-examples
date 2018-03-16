@@ -15,53 +15,61 @@ public abstract class AbstractDbAccessImpl implements IDbAccess {
 	protected IdMap<GeoLocations> geoLocationsIds = new IdMap<GeoLocations>();
 	protected IdMap<GeoLocation> geoLocationIds = new IdMap<GeoLocation>();
 
-	public int getId(Person person) {
+	public IdProvider<Person> getPersonIdProvider() {
+		return personIds;
+	}
+
+	public int getId(final Person person) {
 		return personIds.getId(person);
 	}
 
-	public int getId(GeoLocations geoLocations) {
+	public int getId(final GeoLocations geoLocations) {
 		return geoLocationsIds.getId(geoLocations);
 	}
 
-	public int getId(GeoLocation geoLocation) {
+	public int getId(final GeoLocation geoLocation) {
 		return geoLocationIds.getId(geoLocation);
 	}
-	
+
 	@Override
-	public Person createPerson(String name, String email) {
-		Person person = new Person();
+	public Person createPerson(final String name, final String email) {
+		final Person person = new Person();
 		person.setName(name);
 		person.setEmail(email);
 		return person;
 	}
 
 	@Override
-	public GeoLocations createGeoLocations(Person owner) {
-		GeoLocations geoLocations = new GeoLocations(owner);
+	public GeoLocations createGeoLocations(final Person owner) {
+		final GeoLocations geoLocations = new GeoLocations(owner);
 		owner.addGeolocations(geoLocations);
 		return geoLocations;
 	}
 
 	@Override
-	public GeoLocation addGeoLocation(GeoLocations geoLocations, GeoLocated geoLoc, int elevation, LocalTime time) {
-		// TODO Auto-generated method stub
-		return null;
+	public GeoLocation addGeoLocation(final GeoLocations geoLocations, final GeoLocated geoLoc, final int elevation, final LocalTime time) {
+		final GeoLocation geoLocation = new GeoLocation();
+		geoLocation.setLatLong(geoLoc.getLatLong());
+		geoLocation.setElevation(elevation);
+		geoLocation.setTime(time);
+		geoLocations.addLocation(geoLoc);
+		return geoLocation;
 	}
 
 	@Override
-	public Collection<Person> getAllPersons(boolean refresh) {
+	public Collection<Person> getAllPersons(final boolean refresh) {
 		return new ArrayList<Person>(personIds.get());
 	}
 
 	@Override
-	public Person getPerson(int id, boolean refresh) {
-		Person person = personIds.get(id);
+	public Person getPerson(final int id, final boolean refresh) {
+		final Person person = personIds.get(id);
 		return person;
 	}
 
 	@Override
-	public Person getPersonByName(String name, boolean refresh) {
-		for (Person person : personIds.get()) {
+	public Person getPersonByName(final String name, final boolean refresh) {
+		for (final Person person : personIds.get()) {
 			if (name == person.getName() || (name != null && name.equals(person.getName()))) {
 				return person;
 			}
@@ -70,8 +78,8 @@ public abstract class AbstractDbAccessImpl implements IDbAccess {
 	}
 
 	@Override
-	public Person getPersonByEmail(String email, boolean refresh) {
-		for (Person person : personIds.get()) {
+	public Person getPersonByEmail(final String email, final boolean refresh) {
+		for (final Person person : personIds.get()) {
 			if (email == person.getEmail() || (email != null && email.equals(person.getEmail()))) {
 				return person;
 			}
@@ -80,41 +88,23 @@ public abstract class AbstractDbAccessImpl implements IDbAccess {
 	}
 
 	@Override
-	public Collection<GeoLocations> getGeoLocations(Person owner, boolean refresh) {
-		Collection<GeoLocations> result = new ArrayList<>();
-		for (GeoLocations geoLocations : geoLocationsIds.get()) {
-			if (geoLocations.getOwner() == owner) {
-				result.add(geoLocations);
-			}
-		}
-		return result;
+	public Collection<GeoLocations> getGeoLocations(final Person owner, final boolean refresh) {
+		return owner.getGeoLocations((String[]) null);
 	}
 
 	@Override
-	public void updateGeoLocationsData(GeoLocations geoLocations) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateGeoLocationData(GeoLocations geoLocations, GeoLocations geoLocation) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deletePerson(Person person) {
+	public void deletePerson(final Person person) {
 		personIds.remove(person);
 	}
 
 	@Override
-	public void deleteGeoLocations(GeoLocations geoLocations) {
+	public void deleteGeoLocations(final GeoLocations geoLocations) {
 		geoLocations.getOwner().removeGeolocations(geoLocations);
 		geoLocationsIds.remove(geoLocations);
 	}
 
 	@Override
-	public void deleteGeoLocation(GeoLocations geoLocations, GeoLocation geoLocation) {
+	public void deleteGeoLocation(final GeoLocations geoLocations, final GeoLocation geoLocation) {
 		geoLocationIds.remove(geoLocation);
 	}
 }

@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -149,6 +151,10 @@ public class HsqldbAccessTest {
 		Person hal = dbAccess.createPerson("hal", "hal@ntnu.no");
 		GeoLocations geoLocations1 = dbAccess.createGeoLocations(hal);
 		geoLocations1.setName("geoLocs1");
+		geoLocations1.setDescription("my first geo-location");
+		geoLocations1.setDate(LocalDate.of(2018, 3, 14));
+		geoLocations1.setTime(LocalTime.of(11, 14));
+		geoLocations1.setZone("Europe/Oslo");
 		String[] tags = {"tag1", "tag2"}; 
 		geoLocations1.addTags(tags);
 		dbAccess.updateGeoLocationsData(geoLocations1);
@@ -158,6 +164,11 @@ public class HsqldbAccessTest {
 		Assert.assertEquals(1, hal.getGeoLocations((String[]) null).size()); 
 		Assert.assertEquals(1, dbGeoLocations.size());
 		GeoLocations dbGeoLocations1 = dbGeoLocations.iterator().next();
+		Assert.assertEquals(geoLocations1.getName(), dbGeoLocations1.getName());
+		Assert.assertEquals(geoLocations1.getDescription(), dbGeoLocations1.getDescription());
+		Assert.assertEquals(geoLocations1.getDate(), dbGeoLocations1.getDate());
+		Assert.assertEquals(geoLocations1.getTime(), dbGeoLocations1.getTime());
+		Assert.assertEquals(geoLocations1.getZone(), dbGeoLocations1.getZone());
 		Assert.assertEquals(2, dbGeoLocations1.getTags().length);
 		Assert.assertTrue(dbGeoLocations1.hasTags(tags));
 	}

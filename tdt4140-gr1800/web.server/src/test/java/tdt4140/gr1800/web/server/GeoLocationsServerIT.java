@@ -1,57 +1,79 @@
 package tdt4140.gr1800.web.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import tdt4140.gr1800.app.core.GeoLocated;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import tdt4140.gr1800.app.core.GeoLocation;
 import tdt4140.gr1800.app.core.GeoLocations;
-import tdt4140.gr1800.app.core.GeoLocationsStreamPersistence;
 import tdt4140.gr1800.app.core.LatLong;
-import tdt4140.gr1800.app.json.GeoLocationsJsonPersistence;
+import tdt4140.gr1800.app.core.Person;
+import tdt4140.gr1800.app.json.GeoLocationDeserializer;
+import tdt4140.gr1800.app.json.GeoLocationSerializer;
+import tdt4140.gr1800.app.json.GeoLocationsDeserializer;
+import tdt4140.gr1800.app.json.GeoLocationsSerializer;
+import tdt4140.gr1800.app.json.LatLongDeserializer;
+import tdt4140.gr1800.app.json.LatLongSerializer;
+import tdt4140.gr1800.app.json.PersonDeserializer;
+import tdt4140.gr1800.app.json.PersonSerializer;
 
 public class GeoLocationsServerIT {
 
-	private GeoLocationsStreamPersistence persistence = new GeoLocationsJsonPersistence();
-	
-	private Collection<GeoLocations> get(String path, int size) throws Exception {
-		URL url = new URL("http://localhost:8080/geo" + path);
-		try (InputStream inputStream = url.openStream()) {
-			Collection<GeoLocations> geoLocations = persistence.loadLocations(inputStream);
-			Assert.assertEquals(size, geoLocations.size());
-			return geoLocations;
-		}
+	private ObjectMapper objectMapper;
+
+	@Before
+	public void setUp() {
+		objectMapper = new ObjectMapper();
+		final SimpleModule module = new SimpleModule();
+		module.addSerializer(new LatLongSerializer());
+		module.addSerializer(new GeoLocationSerializer());
+		module.addSerializer(new GeoLocationsSerializer());
+		module.addSerializer(new PersonSerializer());
+		module.addDeserializer(LatLong.class, new LatLongDeserializer());
+		module.addDeserializer(GeoLocation.class, new GeoLocationDeserializer());
+		module.addDeserializer(GeoLocations.class, new GeoLocationsDeserializer());
+		module.addDeserializer(Person.class, new PersonDeserializer());
+		objectMapper.registerModule(module);
 	}
 
-	private LatLong[][] latLongs = {
-		{ new LatLong(63,  10), new LatLong(63.1,  10.1)},
-		{ new LatLong(64,  11), new LatLong(64.1,  11.1)}
-	};
-	
 	@Test
-	public void testGet() throws Exception {
-		Collection<GeoLocations> geoLocations = get("", 2);
-		Iterator<GeoLocations> it = geoLocations.iterator();
-		checkGeoLocations(it.next(), "1", latLongs[0]);
-		checkGeoLocations(it.next(), "2", latLongs[1]);
-
-		Collection<GeoLocations> geoLocations1 = get("/1", 1);
-		checkGeoLocations(geoLocations1.iterator().next(), "1", latLongs[0]);
-		Collection<GeoLocations> geoLocations2 = get("/2", 1);
-		checkGeoLocations(geoLocations2.iterator().next(), "2", latLongs[1]);
-	}
-
-	private void checkGeoLocations(GeoLocations geoLocations, String name, LatLong... latLongs) {
-		Assert.assertEquals(name, geoLocations.getName());
-		Iterator<GeoLocated> it = geoLocations.iterator();
-		for (int i = 0; i < latLongs.length; i++) {
-			Assert.assertTrue(it.hasNext());
-			latLongs[i].equalsLatLong(it.next());
+	public void testPostPerson() throws Exception {
+		final Person person = new Person();
+		person.setName("Hallvard");
+		person.setEmail("hal@ntnu.no");
+		final URL url = new URL("http://localhost:8080/geo/persons");
+		final HttpURLConnection con = ((HttpURLConnection) url.openConnection());
+		con.setRequestMethod("POST");
+		con.setDoOutput(true);
+		con.setDoInput(true);
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		objectMapper.writeValue(out, person);
+		out.close();
+		final byte[] bytes = out.toByteArray();
+		con.setFixedLengthStreamingMode(bytes.length);
+		con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		con.connect();
+		try (OutputStream conOut = con.getOutputStream()) {
+			conOut.write(bytes);
 		}
-		Assert.assertFalse(it.hasNext());
+		try (InputStream conIn = url.openStream()) {
+			final JsonNode jsonTree = objectMapper.readTree(conIn);
+			Assert.assertTrue(jsonTree instanceof ObjectNode);
+			Assert.assertTrue(((ObjectNode) jsonTree).has("id"));
+			final Person conPerson = objectMapper.treeToValue(jsonTree, Person.class);
+			Assert.assertEquals(person.getName(), conPerson.getName());
+			Assert.assertEquals(person.getEmail(), conPerson.getEmail());
+		}
 	}
 }

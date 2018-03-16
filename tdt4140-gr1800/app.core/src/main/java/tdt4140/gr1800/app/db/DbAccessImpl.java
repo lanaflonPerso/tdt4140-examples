@@ -1,11 +1,17 @@
 package tdt4140.gr1800.app.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Collection;
 
+import tdt4140.gr1800.app.core.GeoLocation;
 import tdt4140.gr1800.app.core.GeoLocations;
 import tdt4140.gr1800.app.core.Person;
 
@@ -166,18 +172,23 @@ public class DbAccessImpl extends AbstractDbAccessImpl {
 			geoLocationsIds.removeAll(existingGeoLocations);
 			existingGeoLocations.clear();
 			int ownerId = getId(owner);
-			ResultSet result = helper.executeQuery("SELECT id, path, name, description, date, time FROM geoLocations WHERE ownerId = ?", ownerId);
+			ResultSet result = helper.executeQuery("SELECT id, path, name, description, date, time, zone FROM geoLocations WHERE ownerId = ?", ownerId);
 			try {
 				while (result.next()) {
 					int id = result.getInt(1);
 					boolean path = result.getBoolean(2);
-					String name = result.getString(3), description = result.getString(3);
+					String name = result.getString(3), description = result.getString(4);
 					GeoLocations geoLocations = new GeoLocations(owner);
 					owner.addGeolocations(geoLocations);
 					geoLocations.setPath(path);
 					geoLocations.setName(name);
 					geoLocations.setDescription(description);
-					// TODO: date and time
+					Date date = result.getDate(5);
+					Time time = result.getTime(6);
+					String zone = result.getString(7);
+					geoLocations.setDate(date != null ? date.toLocalDate() : null);
+					geoLocations.setTime(time != null ? time.toLocalTime() : null);
+					geoLocations.setZone(zone != null ? ZoneId.of(zone) : null);
 					existingGeoLocations.add(geoLocations);
 					geoLocationsIds.set(geoLocations, id);
 					ResultSet tagResults = helper.executeQuery(String.format("SELECT tag FROM tag WHERE ownerId = ? AND ownerType = '%s'", TagOwnerType.GLS), id);
@@ -209,8 +220,11 @@ public class DbAccessImpl extends AbstractDbAccessImpl {
 	public void updateGeoLocationsData(GeoLocations geoLocations) {
 		boolean path = geoLocations.isPath();
 		String name = geoLocations.getName(), desc = geoLocations.getDescription();
+		LocalDate date = geoLocations.getDate();
+		LocalTime time = geoLocations.getTime();
+		String zone = (geoLocations.getZone() != null ? geoLocations.getZone().getId() : null);
 		int ownerId = getId(geoLocations);
-		helper.executeDbStatement("UPDATE geoLocations SET path = ?, name = ?, description = ? WHERE id = ?", path, name, desc, ownerId);
+		helper.executeDbStatement("UPDATE geoLocations SET path = ?, name = ?, description = ?, date = ?, time = ?, zone = ? WHERE id = ?", path, name, desc, Date.valueOf(date), Time.valueOf(time), zone, ownerId);
 		deleteTags(ownerId, TagOwnerType.GLS);
 		String insertStatement = "INSERT INTO tag (ownerId, ownerType, tag) VALUES ";
 		String[] tags = geoLocations.getTags();
@@ -233,5 +247,12 @@ public class DbAccessImpl extends AbstractDbAccessImpl {
 		super.deleteGeoLocations(geoLocations);
 		helper.executeDbStatement("DELETE FROM geoLocations WHERE id = ?", ownerId);
 		deleteTags(ownerId, TagOwnerType.GLS);
+	}
+	
+	//
+
+	@Override
+	public void updateGeoLocationData(GeoLocations geoLocations, GeoLocation geoLocation) {
+		throw new UnsupportedOperationException("NYI");
 	}
 }

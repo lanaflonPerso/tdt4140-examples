@@ -18,6 +18,10 @@ public class GeoLocation extends TimedTaggedImpl implements GeoLocated, Timed, T
 		return elevation;
 	}
 	
+	public void setElevation(int elevation) {
+		this.elevation = elevation;
+	}
+	
 	private String name, description;
 	
 	public String getName() {
