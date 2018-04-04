@@ -5,6 +5,6 @@ public interface Tagged {
 	public String[] getTags();
 	public String getTags(String prefix, String separator, String suffix);
 	public void setTags(String... tags);
-	public void addTags(String... tags);	
+	public void addTags(String... tags);
 	public void removeTags(String... tags);
 }
