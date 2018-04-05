@@ -9,30 +9,97 @@ import tdt4140.gr1800.app.core.GeoLocations;
 import tdt4140.gr1800.app.core.Person;
 
 /*
- * CRUD interface for our domain:
+ * class diagram:
  *
  * @startuml
  * class GeoLocationsOwner {
- * 	String id
  * }
+ *
  * class Person {
  * 	String name
  * 	String email
  * }
+ *
+ * class TimedTaggedImpl {
+ *  LocalDate date
+ *  LocalTime time
+ *  ZoneId zone
+ *  String[] tags
+ * }
+ *
  * GeoLocationsOwner <|-- Person
+ *
+ * GeoLocationsOwner *-- GeoLocations: owner
+ *
  * class GeoLocations {
  * 	String name
  * 	String description
+ *  LocalDate date
+ *  LocalTime time
+ *  ZoneId zone
+ *  String[] tags
  * }
- * GeoLocationsOwner *-- GeoLocations: owner
+ *
+ * GeoLocations --|> TimedTaggedImpl
+ *
  * class GeoLocation {
  * 	int elevation
  * 	LocalTime time
  * 	String name
  * 	String description
  * }
+
+ * GeoLocation --|> TimedTaggedImpl
+ *
  * GeoLocations *-- GeoLocation
  * GeoLocation *-- LatLong
+ * @enduml
+ */
+
+/*
+ * ER diagram interface for our domain:
+ *
+ * @startuml
+ * entity person {
+ * * id INTEGER GENERATED
+ * *	 name varchar(80)
+ * *	 email varchar(80)
+ * }
+ *
+ * entity geoLocations {
+ * * id INTEGER GENERATED
+ * 	path boolean
+ * 	name varchar(80)
+ *  description varchar(200)
+ *  date date
+ *  time time
+ *  zone varchar(20)
+ * }
+ *
+ * person --{ geoLocations: ownerId
+ *
+ * entity geoLocation {
+ * * id INTEGER GENERATED
+ * 	name varchar(80)
+ *  description varchar(200)
+ *  * latitude decimal
+ *  * longitude decimal
+ *  elevation int
+ *  date date
+ *  time time
+ *  zone varchar(20)
+ * }
+ *
+ * geoLocations --{ geoLocation: ownerId
+ *
+ * entity tags {
+ *  * ownerType char(3)
+ *  * tag varchar(15)
+ * }
+ *
+ * geoLocations --{ tags: ownerId
+ * geoLocation --{ tags: ownerId
+ *
  * @enduml
  */
 public interface IDbAccess {
