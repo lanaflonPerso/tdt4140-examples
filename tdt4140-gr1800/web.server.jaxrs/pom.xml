@@ -1,0 +1,158 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>tdt4140-gr1800.web.server.jaxrs</artifactId>
+	<packaging>war</packaging>
+
+	<parent>
+		<groupId>tdt4140-gr1800</groupId>
+		<artifactId>tdt4140-gr1800</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+        <jetty.version>9.4.8.v20171121</jetty.version>
+        <jersey.version>2.26</jersey.version>
+    </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>tdt4140-gr1800</groupId>
+			<artifactId>tdt4140-gr1800.app.core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+		<!--
+		Needed as of v. 2.26
+		See https://stackoverflow.com/questions/44088493/jersey-stopped-working-with-injectionmanagerfactory-not-found
+		 -->
+		<dependency>
+		    <groupId>org.glassfish.jersey.inject</groupId>
+		    <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        
+        <!-- to use Jackson as provider for JSON media type -->
+        <dependency>
+    			<groupId>org.glassfish.jersey.media</groupId>
+    			<artifactId>jersey-media-json-jackson</artifactId>
+    			<version>2.26</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.9.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.9.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.0</version>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-maven-plugin -->
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.4.8.v20171121</version>
+				<configuration>
+					<webApp>
+                        <contextPath>/jax-rs</contextPath>
+                    </webApp>				
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<stopKey>stopMe</stopKey>
+					<stopPort>9966</stopPort>
+					<systemProperties>
+						<systemProperty>
+							<name>data.locations</name>
+							<value>file:${project.basedir}/src/test/resources/tdt4140/gr1800/web/server/geoLocations.json</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>                                                              <!-- for starting jetty for integration tests -->
+				<version>2.16</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

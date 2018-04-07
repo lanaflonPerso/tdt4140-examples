@@ -3,7 +3,9 @@ package tdt4140.gr1800.web.server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.servlet.ServletException;
@@ -91,23 +93,33 @@ public class GeoServlet extends HttpServlet {
 	// persons/<id>/geoLocations: Get all the GeoLocations objects, with (some subset of) properties
 	// persons/<id>/geoLocations/<num>: Get a specific GeoLocations object
 	// persons/<id>/geoLocations/<num>/geoLocations: Get all GeoLocation objects, with (some subset of) properties
-	// persons/<id>/geoLocations/<num>/geoLocations/<num>: Get a specific GeoLocations object
+	// persons/<id>/geoLocations/<num>/geoLocations/<num>: Get a specific GeoLocation object
 
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final HttpMethod method = new GetMethod(rootEntity);
+		doRequest(request, new GetMethod(rootEntity), false, true, response);
+	}
+
+	protected void doRequest(final HttpServletRequest request, final HttpMethod method, final boolean jsonInput, final boolean jsonOutput, final HttpServletResponse response) throws ServletException, IOException {
+		final JsonNode jsonNode = (jsonInput ? objectMapper.readTree(request.getInputStream()) : null);
+		method.setPayload(jsonNode);
 		final Object result = method.doMethod(getPathSegments(request));
 		if (result == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} else {
-			respondWithJson(response, result);
+			response.setStatus(HttpServletResponse.SC_OK);
+			if (jsonOutput) {
+				respondWithJson(response, result);
+			} else {
+				response.setStatus(HttpServletResponse.SC_OK);
+			}
 		}
 	}
 
 	protected void respondWithJson(final HttpServletResponse response, final Object result) {
 		response.setContentType("application/json");
-		response.setStatus(HttpServletResponse.SC_OK);
 		try (OutputStream output = response.getOutputStream()) {
+			response.setStatus(HttpServletResponse.SC_OK);
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(output, result);
 		} catch (final Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -119,8 +131,10 @@ public class GeoServlet extends HttpServlet {
 		if (path == null) {
 			throw new ServletException("Path cannot be empty");
 		}
-		final Iterator<String> segments = Arrays.asList(path.split("\\/")).iterator();
-		return segments;
+		final Collection<String> segments = new ArrayList<String>(Arrays.asList(path.split("\\/")));
+		// remove empty segments
+		while (segments.remove(""));
+		return segments.iterator();
 	}
 
 	// POST variants
@@ -133,15 +147,7 @@ public class GeoServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final HttpMethod method = new PostMethod(rootEntity);
-		final JsonNode jsonNode = objectMapper.readTree(request.getInputStream());
-		method.setPayload(jsonNode);
-		final Object result = method.doMethod(getPathSegments(request));
-		if (result == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		} else {
-			respondWithJson(response, result);
-		}
+		doRequest(request, new PostMethod(rootEntity), true, true, response);
 	}
 
 	// PUT variants
@@ -150,19 +156,11 @@ public class GeoServlet extends HttpServlet {
 	// persons/<id>/geoLocations: Not allowed
 	// persons/<id>/geoLocations/<num>: Update specific GeoLocations object
 	// persons/<id>/geoLocations/<num>/geoLocations: Not allowed
-	// persons/<id>/geoLocations/<num>/geoLocations/<num>: Update specific GeoLocations object
+	// persons/<id>/geoLocations/<num>/geoLocations/<num>: Update specific GeoLocation object
 
 	@Override
 	protected void doPut(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final HttpMethod method = new PutMethod(rootEntity);
-		final JsonNode jsonNode = objectMapper.readTree(request.getInputStream());
-		method.setPayload(jsonNode);
-		final Object result = method.doMethod(getPathSegments(request));
-		if (result == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		} else {
-			respondWithJson(response, result);
-		}
+		doRequest(request, new PutMethod(rootEntity), true, true, response);
 	}
 
 	// DELETE variants
@@ -175,12 +173,6 @@ public class GeoServlet extends HttpServlet {
 
 	@Override
 	protected void doDelete(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final HttpMethod method = new DeleteMethod(rootEntity);
-		final Object result = method.doMethod(getPathSegments(request));
-		if (result == null) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		} else {
-			respondWithJson(response, result);
-		}
+		doRequest(request, new DeleteMethod(rootEntity), false, true, response);
 	}
 }
