@@ -14,5 +14,9 @@
 	<modules>
 		<module>app.core</module>
 		<module>app.ui</module>
+		<!-- 
+		<module>web.server</module>
+		 -->
+		<module>web.server.jaxrs</module>
 	</modules>
 </project>
