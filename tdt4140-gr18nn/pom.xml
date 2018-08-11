@@ -18,5 +18,6 @@
 		<module>web.server</module>
 		 -->
 		<module>web.server.jaxrs</module>
+		<module>web.server.javalin</module>
 	</modules>
 </project>
